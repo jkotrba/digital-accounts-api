@@ -13,6 +13,7 @@ export default async() => {
   const options = {
     router: {
       isCaseSensitive: false,
+      stripTrailingSlash: true,
     },
     routes: {
       cors: true,

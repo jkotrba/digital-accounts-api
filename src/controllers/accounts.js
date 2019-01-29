@@ -1,42 +1,93 @@
 import Boom from 'boom'
+import db from '../db'
 
 const fakeAccounts = [
-  { id: 1, name: 'Account 1', balance: 12.00 },
-  { id: 2, name: 'Account 2', balance: 1.00 },
-  { id: 3, name: 'Account 3', balance: 18.00 },
-  { id: 4, name: 'Account 4', balance: 13.00 },
-  { id: 5, name: 'Account 5', balance: 9.00 },
+  { id: 1, name: 'Account 1', balance: 12.0 },
+  { id: 2, name: 'Account 2', balance: 1.0 },
+  { id: 3, name: 'Account 3', balance: 18.0 },
+  { id: 4, name: 'Account 4', balance: 13.0 },
+  { id: 5, name: 'Account 5', balance: 9.0 }
 ]
-export const list = () => {
-  return Promise.resolve(fakeAccounts)
+export const list = async (req, h) => {
+
+  const results = await db.query('SELECT id, name, date_created FROM accounts')
+  const rows = results[0]
+  const accounts = rows.map(row => {
+    return {
+      id: row.id,
+      name: row.name,
+      date_created: row.date_created
+    }
+  })
+
+  return { data: accounts }
+
 }
 
-export const get = (req, h) => {
-  const id = +req.params.id
+export const get = async (req, h) => {
 
-  // TODO: add proper joi schema validation
-  if(id == null || isNaN(id)) {
-    return Boom.badRequest('Invalid id')
+  const id = req.params.id
+
+  const account = await getAccount(id)
+  if(account == null) {
+    return Boom.notFound()
+  }
+  return {
+    data: {
+      id: account.id,
+      name: account.name,
+      date_created: account.date_created
+    }
   }
 
-  const account = fakeAccounts.find(a => a.id === id)
+}
 
+export const create = async (req, h) => {
+
+  let payload = req.payload
+  const { name } = payload
+  const now = new Date()
+  const newAccount = {
+    name: name,
+    date_created: now,
+    date_modified: now
+  }
+
+  const id = await saveAccount(newAccount)
+  console.log('path: ', req.path)
+  return h.response()
+    .header('location', `${req.path}/${id}`)
+    .code(201)
+
+}
+
+export const update = async(req, h) => {
+
+  let id = req.params.id
+  let name = req.payload.name
+
+  let account = await getAccount(id)
+  if(account == null) {
+    return Boom.notFound()
+  }
+  console.log(account)
+  account.name = name
+  account.date_modified = new Date()
+  await saveAccount(account)
+  return h.response().code(200)
+
+}
+
+export const remove = async (req, h) => {
+
+  let id = req.params.id
+  let account = getAccount(id)
   if(account == null) {
     return Boom.notFound()
   }
 
-  return Promise.resolve(account)
-}
-
-export const create = (req, h) => {
-
-}
-
-export const update = (req, h) => {
-
-}
-
-export const remove = (req, h) => {
+  await deleteAccount(id)
+  return h.response().code(200)
 
 }
 
@@ -46,4 +97,27 @@ export default {
   create,
   update,
   remove
+}
+
+const getAccount = async (id) => {
+
+  let results = await db.query('SELECT id, name, date_created FROM accounts WHERE id = ?', id)
+  let rows = results[0]
+  if(rows.length > 0) {
+    return rows[0]
+  }
+  return null
+
+}
+
+const saveAccount = async(account) => {
+  if(account.id) {
+    return db.query('UPDATE accounts SET name = ?, date_modified = ? WHERE id = ?', [account.name, account.date_modified, account.id])
+  }
+  let results = await db.query('INSERT INTO accounts SET ?', account)
+  return results[0].insertId
+}
+
+const deleteAccount = (id) => {
+  return db.query('DELETE FROM accounts WHERE id = ?', id)
 }
