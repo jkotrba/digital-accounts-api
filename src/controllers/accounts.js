@@ -1,13 +1,6 @@
 import Boom from 'boom'
 import db from '../db'
 
-const fakeAccounts = [
-  { id: 1, name: 'Account 1', balance: 12.0 },
-  { id: 2, name: 'Account 2', balance: 1.0 },
-  { id: 3, name: 'Account 3', balance: 18.0 },
-  { id: 4, name: 'Account 4', balance: 13.0 },
-  { id: 5, name: 'Account 5', balance: 9.0 }
-]
 export const list = async (req, h) => {
 
   const results = await db.query('SELECT id, name, date_created FROM accounts')
@@ -54,7 +47,6 @@ export const create = async (req, h) => {
   }
 
   const id = await saveAccount(newAccount)
-  console.log('path: ', req.path)
   return h.response()
     .header('location', `${req.path}/${id}`)
     .code(201)
@@ -81,7 +73,7 @@ export const update = async(req, h) => {
 export const remove = async (req, h) => {
 
   let id = req.params.id
-  let account = getAccount(id)
+  let account = await getAccount(id)
   if(account == null) {
     return Boom.notFound()
   }
@@ -103,9 +95,11 @@ const getAccount = async (id) => {
 
   let results = await db.query('SELECT id, name, date_created FROM accounts WHERE id = ?', id)
   let rows = results[0]
+
   if(rows.length > 0) {
     return rows[0]
   }
+
   return null
 
 }
