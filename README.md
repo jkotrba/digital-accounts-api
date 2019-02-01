@@ -1,13 +1,11 @@
-# Helio's Node Boilerplate
+# A RESTful hapi api for tracking digital account allowances
 
 > Set up a node project with various tools installed.
 
 ## Usage
 
-This a good starting point for using babel, mocha, and eslint for coding.
-
 ```bash
-git clone https://github.com/helio-training/node-boilerplate.git [name-of-project]
+npm start:dev
 ```
 
-Change the remote origins in git to push your changes to your own repositories.
+Setup your own database and modify the values in .env and .mysql_docker_env if using docker to run mysql
