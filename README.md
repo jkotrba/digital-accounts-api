@@ -1,7 +1,5 @@
 # A RESTful hapi api for tracking digital account allowances
 
-> Set up a node project with various tools installed.
-
 ## Usage
 
 ```bash
