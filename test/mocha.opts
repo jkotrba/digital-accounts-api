@@ -1,0 +1,5 @@
+--require babel-register
+--require ./test/_setup.js
+--es_staging
+--recursive
+--ui bdd
