@@ -10,6 +10,7 @@ const env = process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 const port = process.env.PORT || 3400
 
 export default async() => {
+
   const options = {
     router: {
       isCaseSensitive: false,

@@ -1,5 +1,6 @@
 --require babel-register
 --require ./test/_setup.js
+--reporter nyan
 --es_staging
 --recursive
 --ui bdd

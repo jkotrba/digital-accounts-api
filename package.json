@@ -10,7 +10,7 @@
     "start:dev": "./node_modules/.bin/nodemon ./node_modules/.bin/babel-node .",
     "prepublish": "npm run build",
     "build": "babel src -d dist -s inline",
-    "test": "mocha test/**/*.test.js --reporter=spec"
+    "test": "mocha test/**/*.test.js"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

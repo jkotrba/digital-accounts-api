@@ -28,7 +28,9 @@
       "error",
       "never"
     ],
-    "no-console": 0,
+    "no-var": [
+      "error"
+    ],
     "no-unused-vars": 0
   }
 }
